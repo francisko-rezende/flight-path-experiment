@@ -30,7 +30,10 @@ Obs: the examples assume the file/folder being moved are in the current working 
 
 ## Download
 
-+ 
+Obs: the examples assume the file/folder being moved are in the current working directory
+
++ `frdemora@remote-machine:~/example-folder/example.txt .` for files;
++ `scp -r frdemora@remote-machine:~/example-folder .` for folders.
 
 # Actions I took
 
