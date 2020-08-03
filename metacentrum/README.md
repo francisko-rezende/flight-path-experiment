@@ -38,3 +38,18 @@ Obs: the examples assume the file/folder being moved are in the current working 
 # Actions I took
 
 + 2020-06-19 I reformatted the HDD we bought so it is in exFAT. I followed this [tutorial](https://support-en.wd.com/app/answers/detail/a_id/20821). After reformatting I backed up the data I had in my computer using the drive.
+
++ 2020-07-09: I followed MetaCentrum's instructions on how to install debian libraries to install `libatlas3-base` into Argus (the environment I created in alfrid)
+  + `apt-get download libatlas3-base`
+  + `ar -x libatlas3-base_3.10.3-1+b1_amd64.deb; ls`
+  + `unxz data.tar.xz`
+  + `tar -xvf data.tar`
+  + `cp ~/software/usr/lib/* ~/.conda/envs/Argus/lib/`
++ Argus still does not work though
+
++ 2020-08-03:
+  + Got help from MetaCentrum support and got Argus running on their computers!
+  + Finished renaming the videos in the external HDD;
+  + Backed-up the videos by creating a `tar.gz` file encompassing the whole `flight-recordings`folder
+    + code: `tar -czvf flight-recordings.tar.gz flight-recording`
+
