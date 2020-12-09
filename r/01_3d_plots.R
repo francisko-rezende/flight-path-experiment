@@ -1,0 +1,46 @@
+library(tidyverse)
+library(plotly)
+library(janitor)
+
+b10_t1 <- read_csv("data/b10-t1-waaaaaand-unpaired-points-xyz.csv")
+
+cal2 <- read_csv("data/b10-t1-waaaaaand-paired-points-xyz.csv")
+
+b10_t1_no_na <- b10_t1 %>%
+  filter(!is.na(x_1))
+  # rename_at()
+  # dist.xyz()
+
+b10_t1_dist <- dist(b10_t1_no_na) %>% 
+  as.matrix()
+
+sum((b10_t1_dist[row(b10_t1_dist) == col(b10_t1_dist) + 1]))
+
+summary(b10_t1)
+
+range(b10_t1$x_1, na.rm = T)
+
+range(b10_t1$y_1, na.rm = T)
+
+range(b10_t1$z_1, na.rm = T)
+
+plot_ly(data = b10_t1_no_na,
+  type = "scatter3d", 
+  x = b10_t1$x_1 ,
+  y = b10_t1$y_1,
+  z = b10_t1$z_1 
+  ,mode = "lines")
+
+
+dat <- tibble(a = c(1, 2, 4, 8),
+              b = rep(0, 4),
+              c = rep(0, 4))
+
+dist(dat) %>% 
+  diag()
+
+dat <- dist(dat) %>% 
+  as.matrix()
+
+dat[row(dat) == col(dat) + 1]
+
