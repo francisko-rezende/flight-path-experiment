@@ -47,14 +47,14 @@ dat[row(dat) == col(dat) + 1]
 
 # plotting irca's tracking file -------------------------------------------
 
-b15_t2 <- readr::read_csv(here::here('data', 'b15-t2-wandOutput-unpaired-points-xyz.csv'))
+b15_t2 <- readr::read_csv(here::here('data', 'b15-t2-wandOutput-unpaired-points-xyz.csv'))  # begin by reading in the file
 
 b15_t2_no_na <- b15_t2 %>% 
-  filter(!is.na(x_1))
+  filter(!is.na(x_1))  # remove missing points (this step doesn't seem to make a difference according to my own tests, I left it just in case though)
 
 plot_ly(data = b15_t2_no_na,
         type = "scatter3d", 
         x = b15_t2$x_1 ,
         y = b15_t2$y_1,
         z = b15_t2$z_1 
-        ,mode = "lines")
+        ,mode = "lines") does 
