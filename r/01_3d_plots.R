@@ -44,3 +44,17 @@ dat <- dist(dat) %>%
 
 dat[row(dat) == col(dat) + 1]
 
+
+# plotting irca's tracking file -------------------------------------------
+
+b15_t2 <- readr::read_csv(here::here('data', 'b15-t2-wandOutput-unpaired-points-xyz.csv'))
+
+b15_t2_no_na <- b15_t2 %>% 
+  filter(!is.na(x_1))
+
+plot_ly(data = b15_t2_no_na,
+        type = "scatter3d", 
+        x = b15_t2$x_1 ,
+        y = b15_t2$y_1,
+        z = b15_t2$z_1 
+        ,mode = "lines")
