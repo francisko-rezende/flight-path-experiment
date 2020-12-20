@@ -58,3 +58,9 @@ plot_ly(data = b15_t2_no_na,
         y = b15_t2$y_1,
         z = b15_t2$z_1 
         ,mode = "lines") does 
+
+
+# b195 t1 -----------------------------------------------------------------
+
+b195_t1 <- readr::read_csv(here::here("data", "B195 T1-xypts.csv"))
+
