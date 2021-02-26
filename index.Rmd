@@ -84,7 +84,7 @@ plot_ly(data = dat,
 
 ## Processing the CSV files
 
-### Creats the dataframe that will receive the data from the flight paths
+### Creates the dataframe that will receive the data from the flight paths
 
 ```{r}
 flights <-
@@ -1004,8 +1004,18 @@ flights <-
 plots_flight_path(b246_t3)
 ```
 
-
+ 
 ## Table with all the data
+
+### Making the separator in `butterfly_flight` homogenous and renaming it to `butterfly_take`
+
+```{r}
+flights %>% 
+  tidyr::separate(col = butterfly_flight, into = c("butterfly", "flight"), sep = "([-_])") %>% 
+  tidyr::unite("butterfly_take", butterfly:flight, sep = "_") -> flights
+```
+
+### Printing the actual table
 
 ```{r}
 flights %>% 
