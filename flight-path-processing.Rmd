@@ -1,0 +1,251 @@
+---
+title: "Flight path processing"
+author: "Francisko de Moraes Rezende"
+date: ""
+output:
+  html_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+## Setup
+
+### Loading and installing packages in case it is necessary
+
+```{r}
+list_of_packages <- c("tidyverse", "plotly", "shiny", "here", "fs")
+new_packages <-
+  list_of_packages[!(list_of_packages %in% installed.packages()[, "Package"])]
+if (length(new_packages))
+  install.packages(new_packages)
+```
+
+
+```{r}
+library(tidyverse)
+library(plotly)
+library(shiny)
+library(here)
+library(fs)
+```
+
+### Defining the function I used to calculate distance
+
+```{r}
+calc_flight_dist <- name <- function(dat) {
+  dat_dist <-  {{dat}} %>% 
+  dplyr::filter(!is.na(x_1)) %>%
+  dist() %>% 
+  as.matrix()
+
+return(sum((dat_dist[row(dat_dist) == col(dat_dist) + 1])))
+  
+}
+```
+
+### Defining function I used to calculate all variables from flight trajectory
+
+```{r}
+calc_flight_trajectory_vars <- function(dat) {
+  
+dat %>% 
+  group_by(butterfly_flight) %>% 
+  summarise(flight_dist = calc_flight_dist(.),
+            min_x = min(.$x_1, na.rm = T),
+            max_x = max(.$x_1, na.rm = T),
+            min_y = min(.$y_1, na.rm = T),
+            max_y = max(.$y_1, na.rm = T),
+            min_z = min(.$z_1, na.rm = T),
+            max_z = max(.$z_1, na.rm = T))
+}
+
+```
+
+### Defining the function I used to make the 3d plots
+
+```{r}
+plots_flight_path <- function(dat) {
+  
+plot_ly(data = dat,
+        type = "scatter3d", 
+        x = dat$x_1 ,
+        y = dat$y_1,
+        z = dat$z_1,
+        mode = "lines")
+}
+
+```
+
+
+## Processing the CSV files
+
+### Creats the dataframe that will receive the data from the flight paths
+
+```{r}
+flights <-
+tibble::tibble(
+  butterfly_flight = character(),
+  flight_dist = numeric(),
+  min_x = numeric(),
+  max_x = numeric(),
+  min_y = numeric(),
+  max_y = numeric(),
+  min_z = numeric(),
+  max_z = numeric()
+) 
+```
+
+### b195 t1
+
+#### Reads the data
+
+```{r}
+b195_t1 <- readr::read_csv(here::here("unpaired-points", "b195-t1-unpaired-points-xyz.csv")) %>% 
+  dplyr::mutate(butterfly_flight = "b195_t1") 
+```
+
+#### Calculates the variables
+
+```{r}
+flights <- 
+  calc_flight_trajectory_vars(b195_t1) %>% 
+  dplyr::bind_rows(flights, .)
+```
+
+#### Plots the trajectory
+
+```{r}
+plots_flight_path(b195_t1)
+```
+
+
+### b195 t2
+
+#### Reads the data
+
+```{r}
+b195_t2 <- readr::read_csv(here::here("unpaired-points", "b195-t2-unpaired-points-xyz.csv")) %>% 
+  dplyr::mutate(butterfly_flight = "b195_t2") 
+```
+
+#### Calculates the variables
+
+```{r}
+flights <-
+  calc_flight_trajectory_vars(b195_t2) %>%
+  bind_rows(flights, .)
+```
+
+#### Plots the trajectory
+
+```{r}
+plots_flight_path(b195_t2)
+```
+
+
+### b195 t3
+
+#### Reads the data
+
+```{r}
+b195_t3 <- readr::read_csv(here::here("unpaired-points", "b195-t3-unpaired-points-xyz.csv")) %>% 
+  dplyr::mutate(butterfly_flight = "b195_t3") 
+```
+
+#### Calculates the variables
+
+```{r}
+flights <-
+  calc_flight_trajectory_vars(b195_t3) %>%
+  bind_rows(flights, .)
+```
+
+#### Plots the trajectory
+
+```{r}
+plots_flight_path(b195_t3)
+```
+
+### b195 t4
+
+#### Reads the data
+
+```{r}
+b195_t4 <- readr::read_csv(here::here("unpaired-points", "b195-t4-unpaired-points-xyz.csv")) %>% 
+  dplyr::mutate(butterfly_flight = "b195_t4") 
+```
+
+#### Calculates the variables
+
+```{r}
+flights <-
+  calc_flight_trajectory_vars(b195_t4) %>%
+  bind_rows(flights, .)
+```
+
+```{r}
+flights
+```
+
+
+#### Plots the trajectory
+
+```{r}
+plots_flight_path(b195_t4)
+```
+
+
+### b195 t5
+
+#### Reads the data
+
+```{r}
+b195_t5 <- readr::read_csv(here::here("unpaired-points", "b195-t5-unpaired-points-xyz.csv")) %>% 
+  dplyr::mutate(butterfly_flight = "b195_t5") 
+```
+
+#### Calculates the variables
+
+```{r}
+flights <-
+  calc_flight_trajectory_vars(b195_t5) %>%
+  bind_rows(flights, .)
+```
+
+#### Plots the trajectory
+
+```{r}
+plots_flight_path(b195_t5)
+```
+
+
+### b206 t1
+
+#### Reads the data
+
+```{r}
+b206_t1 <- readr::read_csv(here::here("unpaired-points", "b206-t1-unpaired-points-xyz.csv")) %>% 
+  dplyr::mutate(butterfly_flight = "b206-t1") 
+```
+
+#### Calculates the variables
+
+```{r}
+flights <-
+  calc_flight_trajectory_vars(b206_t1) %>%
+  bind_rows(flights, .)
+```
+
+#### Plots the trajectory
+
+```{r}
+plots_flight_path(b206_t1)
+```
+
+```{r}
+flights
+```
+

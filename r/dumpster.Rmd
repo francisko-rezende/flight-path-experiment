@@ -1,0 +1,83 @@
+---
+title: "dumpster"
+author: "Francisko de Moraes Rezende"
+date: "2/26/2021"
+output: html_document
+---
+
+```{r}
+b195_t1_dist <-  b195_t1 %>% 
+  dplyr::filter(!is.na(x_1)) %>%
+  dist() %>% 
+  as.matrix()
+
+sum((b195_t1_dist[row(b195_t1_dist) == col(b195_t1_dist) + 1]))
+
+test <- calc_flight_dist(b195_t1)
+```
+
+
+```{r}
+# b195_t1_dist <-  
+  b195_t1 %>% 
+  dplyr::filter(!is.na(x_1)) %>%
+  dist() %>% 
+  as.matrix() %>% 
+  sum((.[row(.) == col(.) + 1]))
+```
+
+
+#### Min and max values along the x axis
+
+range(b10_t1$x_1, na.rm = T)
+
+#### Min and max values along the y axis
+
+range(b10_t1$y_1, na.rm = T)
+
+#### Min and max values along the z axis
+
+range(b10_t1$z_1, na.rm = T)
+
+
+
+<!-- ```{r} -->
+<!-- # fi -->
+<!--   fs::dir_ls(here::here("unpaired-points")) -->
+<!-- ``` -->
+
+### Loading all csv files
+
+```{r}
+files <- fs::dir_ls(here::here("unpaired-points"))
+
+files %>% 
+  purrr::map_dfr(readr::read_csv, .id = "source") -> all_flights
+
+# %>% 
+#   dplyr::group_by(source) %>% 
+#   dplyr::summarise(flight_dist = calc_flight_dist(.)) -> all_flights
+
+
+View(all_flights)
+```
+
+```{r}
+
+b238_t5 <- 
+  read_csv("unpaired-points/b238-t5-unpaired-points-xyz.csv")
+
+b238_t5 %>% 
+  dplyr::summarise(flight_dist = calc_flight_dist(.))
+```
+
+```{r}
+all_flights %>% 
+  group_by(source) %>% 
+  nest() %>% 
+  mutate(flight_dist = purrr::map_dbl(.x = data,
+                                  calc_flight_dist)) %>% View()
+  
+  
+```
+
