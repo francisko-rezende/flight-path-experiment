@@ -1,0 +1,130 @@
+---
+title: "Testing smoothing and sinuosity"
+author: "Francisko de Moraes Rezende"
+date: "3/5/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading packages
+
+```{r}
+list_of_packages <- c("tidyverse", "plotly", "here", "signal", "DT")
+new_packages <- list_of_packages[!(list_of_packages %in% installed.packages()[,"Package"])]
+if(length(new_packages)) install.packages(new_packages)
+
+library(tidyverse)
+library(plotly)
+library(here)
+library(signal)
+library(DT)
+```
+
+## Loading data
+
+```{r}
+b195_t1 <- readr::read_csv(here::here("unpaired-points", "b195-t1-unpaired-points-xyz.csv")) 
+```
+
+## Testing smoothing
+
+### Creating filter
+
+I created the filter using the same parameter values Camille describes in his paper.
+
+```{r}
+butterworth_filter <-
+  butter(n = 4,  # order
+         W = 0.5,  # critical frequency
+         type = "low")
+```
+
+### Applying filter
+
+```{r}
+b195_t1 %>% 
+  tidyr::drop_na() %>% 
+  dplyr::mutate(x_butterworth = signal::filter(butterworth_filter, x_1),
+                y_butterworth = signal:: filter(butterworth_filter, y_1),
+                z_butterworth = signal::filter(butterworth_filter, z_1)) -> b195_t1_filtered
+
+b195_t1_filtered %>% 
+  DT::datatable(extensions = 'Buttons',
+                options = list(dom = 'Blfrtip',
+                               buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+                               lengthMenu = list(c(10,25,50,-1),
+                                                 c(10,25,50,"All"))))
+```
+
+Here is a plot with both the raw and the "smoothed" paths so you can see difference.
+
+```{r}
+plot_ly(data = b195_t1_filtered,
+        type = "scatter3d",
+        name = "Raw tracking",
+        x = b195_t1_filtered$x_1,
+        y = b195_t1_filtered$y_1,
+        z = b195_t1_filtered$z_1,
+        mode = "lines",
+        line = list(color = "steelblue")) %>% 
+  add_trace(
+    type = "scatter3d",
+    name = "Tracking smoothed usind butterworth filter",
+    x = b195_t1_filtered$x_butterworth,
+    y = b195_t1_filtered$y_butterworth,
+    z = b195_t1_filtered$z_butterworth,
+    mode = "lines",
+    line = list(color = "firebrick")
+  )
+```
+
+## Testing sinuosity
+
+### A quick intro to how I calculated the distance the butterflies flew (I dare you to say it three times fast!)
+
+I used `dist()`, a function from base R. It uses Euclidean distances by default and, since I did not change it, that's the distances I sent you in that other Rmd file.
+
+I'll give a brief tour of how I calculated the distances to clarify things.
+
+I defined the following function to calculate distance, it:
+
+  + removes NAs, which is required for the next steps;
+  + calls `dist` to calculate the distances;
+  + converts it into a matrix;
+  + adds the distances between the points (distance between points 1 and 2, points 2 and 3, and so on);
+
+```{r}
+calc_flight_dist <- name <- function(dat) {
+  dat_dist <-  {{dat}} %>% 
+  dplyr::filter(!is.na(x_1)) %>%  # removes NA
+  dist() %>%  # calculates distance
+  as.matrix()  # converts it to a matrix
+
+return(sum((dat_dist[row(dat_dist) == col(dat_dist) + 1])))  # sums the distance between points
+  
+}
+```
+
+Here is it working in practice. First, I define a toy set of points. In this example there's only movement along one axis to make it easier to follow
+
+```{r}
+tibble(
+  x_1 = c(0, 3, 5),  # there' only movement along this axis
+  y = c(0, 0, 0),
+  z = c(0, 0, 0)
+) %>% 
+  calc_flight_dist()
+```
+
+```{r}
+dist_dat <- 
+  b195_t1 %>% 
+  dplyr::filter(!is.na(x_1)) %>%
+  dist() %>% 
+  as.matrix()
+
+dist_dat[1, nrow(dist_dat)]
+```
