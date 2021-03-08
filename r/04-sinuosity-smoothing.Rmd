@@ -103,21 +103,46 @@ calc_flight_dist <- name <- function(dat) {
   dist() %>%  # calculates distance
   as.matrix()  # converts it to a matrix
 
-return(sum((dat_dist[row(dat_dist) == col(dat_dist) + 1])))  # sums the distance between points
+return(sum((dat_dist[row(dat_dist) == col(dat_dist) + 1])))  # sums the distance between points by summing the points in line n and column n + 1
   
 }
 ```
 
-Here is it working in practice. First, I define a toy set of points. In this example there's only movement along one axis to make it easier to follow
+
+Here is it working in practice. First, I define a toy set of points.
 
 ```{r}
 tibble(
-  x_1 = c(0, 3, 5),  # there' only movement along this axis
-  y = c(0, 0, 0),
-  z = c(0, 0, 0)
-) %>% 
-  calc_flight_dist()
+  x_1 = c(0, 3, 3, 3),  # there' only movement along this axis
+  y = c(0, 0, 1, 1),
+  z = c(0, 0, 0, 4)
+) -> ex1
 ```
+
+Here's a quick plot so it is easier to visualize the path:
+
+```{r}
+plot_ly(data = ex1,
+        type = "scatter3d",
+        name = "Raw tracking",
+        x = ex1$x_1,
+        y = ex1$y,
+        z = ex1$z,
+        mode = "lines",
+        line = list(color = "steelblue"))
+```
+
+Now let's apply the distance calculation function:
+
+```{r}
+calc_flight_dist(ex1)
+```
+
+It returns `r calc_flight_dist(ex1)`, which is the total distance in this path.
+
+### Sinuosity
+
+To calculate sinuosity, we need the distance between the first and last points, which we can get in the distance matrix, in the last value of the first line (or the first row and last column). We get this using the function `nrow` (or `ncol`) that returns the total number of rows in the matrix and thus we can use it so get the value in the last row by using it as the index of a subset call:
 
 ```{r}
 dist_dat <- 
@@ -126,5 +151,5 @@ dist_dat <-
   dist() %>% 
   as.matrix()
 
-dist_dat[1, nrow(dist_dat)]
+dist_dat[1, nrow(dist_dat)]  # here it is
 ```
