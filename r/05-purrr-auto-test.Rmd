@@ -47,7 +47,7 @@ plotly::plot_ly(data = dat,
 ```
 
 ```{r}
-straight_dist <- function(dat) {
+calc_straight_dist <- function(dat) {
   
 dist_dat <- 
   dat %>% 
@@ -66,6 +66,7 @@ all_flights %>%
   dplyr::group_by(source) %>%
   tidyr::nest() %>% 
   dplyr::mutate(distance = purrr::map_dbl(data, ~ calc_flight_dist(.x)),
+                straight_distance = purrr::map_dbl(data, ~ calc_straight_dist(.x)),
                 plot_3d = purrr::map(data, ~ plots_flight_path(.x)),
                 butterfly = stringr::str_extract(source, pattern = "b\\d{3}"),
                 take = stringr::str_extract(source, pattern = "t\\d{1}")) 
@@ -97,13 +98,6 @@ read_csv(here("subset-unpaired-points", "b195-t1-unpaired-points-xyz.csv")) %>%
   calc_flight_dist()
 ```
 
-```{r}
-read_csv(here("subset-unpaired-points", "b211-t2-unpaired-points-xyz.csv")) %>% 
-  tibble::rowid_to_column(var = "row_number") %>% 
-  tidyr::drop_na() %>%
-  select(row_number) %>% 
-  range()
-```
 
 Calculates how many rows there are after removing NaNs, might be useful to calculate speed.
 
@@ -114,3 +108,14 @@ read_csv(here("subset-unpaired-points", "b211-t2-unpaired-points-xyz.csv")) %>%
   nrow()
 ```
 
+The above might not work because of gaps in the tracking, the method below might be better
+
+Gotta take the difference between the min and max values so we know the full extent of the flight even though some points might be missing.
+
+```{r}
+read_csv(here("subset-unpaired-points", "b211-t2-unpaired-points-xyz.csv")) %>% 
+  tibble::rowid_to_column(var = "row_number") %>% 
+  tidyr::drop_na() %>%
+  select(row_number) %>% 
+  range()
+```
