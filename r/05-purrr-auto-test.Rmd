@@ -8,12 +8,23 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Loads and installs packages used if needed
+
 ```{r}
+list_of_packages <- c("tidyverse", "here", "fs", "plotly")
+new_packages <- list_of_packages[!(list_of_packages %in% installed.packages()[,"Package"])]
+if(length(new_packages)) install.packages(new_packages)
+
 library(tidyverse)
 library(here)
 library(fs)
 library(plotly)
 ```
+
+# Loads files
+
+The following chunk loads all .csv files in the "subset-unpaired-points" folder
+and puts
 
 ```{r}
 files <- fs::dir_ls(here::here("subset-unpaired-points"))
@@ -21,9 +32,10 @@ files <- fs::dir_ls(here::here("subset-unpaired-points"))
 files %>% 
   purrr::map_dfr(readr::read_csv, .id = "source") -> all_flights
 ```
+# Defines functions
 
 ```{r}
-calc_flight_dist <- name <- function(dat) {
+calc_flight_dist <- function(dat) {
   dat_dist <-  {{dat}} %>% 
   dplyr::filter(!is.na(x_1)) %>%  # removes NA
   dist() %>%  # calculates distance
@@ -89,7 +101,7 @@ read_csv(here("subset-unpaired-points", "b211-t2-unpaired-points-xyz.csv")) %>%
 
 ```{r}
 read_csv(here("subset-unpaired-points", "b211-t2-unpaired-points-xyz.csv")) %>% 
-  straight_dist()
+  calc_straight_dist()
 ```
 
 
