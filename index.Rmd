@@ -48,6 +48,27 @@ return(sum((dat_dist[row(dat_dist) == col(dat_dist) + 1])))
 }
 ```
 
+### Defining function I used to calculate sinuosity (see explanation below)
+
+Actually the following calculates the straight distance between the first and the last recorded points. sinuosity will be (as Camille defines it in the morpho paper) the ration between the actual distance and this straight distance.
+
+```{r}
+calc_straight_flight_dist <- function(dat) {
+  
+dist_dat <- 
+  {dat} %>% 
+  dplyr::filter(!is.na(x_1)) %>%
+  dist() %>% 
+  as.matrix()
+
+dist_dat[1, nrow(dist_dat)]
+
+}
+
+```
+
+
+
 ### Defining function I used to calculate all variables from flight trajectory
 
 ```{r}
@@ -56,6 +77,8 @@ calc_flight_trajectory_vars <- function(dat) {
 dat %>% 
   group_by(butterfly_flight) %>% 
   summarise(flight_dist = calc_flight_dist(.),
+            str_flight_dist = calc_straight_flight_dist(.),
+            sinuosity = flight_dist / str_flight_dist,
             min_x = min(.$x_1, na.rm = T),
             max_x = max(.$x_1, na.rm = T),
             min_y = min(.$y_1, na.rm = T),
@@ -81,7 +104,6 @@ plot_ly(data = dat,
 
 ```
 
-
 ## Processing the CSV files
 
 ### Creates the dataframe that will receive the data from the flight paths
@@ -91,6 +113,8 @@ flights <-
 tibble::tibble(
   butterfly_flight = character(),
   flight_dist = numeric(),
+  str_flight_dist = numeric(),
+  sinuosity = numeric(),
   min_x = numeric(),
   max_x = numeric(),
   min_y = numeric(),

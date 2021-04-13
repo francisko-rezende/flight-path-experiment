@@ -32,6 +32,18 @@ files <- fs::dir_ls(here::here("subset-unpaired-points"))
 files %>% 
   purrr::map_dfr(readr::read_csv, .id = "source") -> all_flights
 ```
+
+## trying to auto load all files
+
+```{r}
+fs::dir_ls(here::here('wand'), recurse = T, regexp = "unpaired-points-xyz.csv$") %>% 
+  purrr::map_dfr(readr::read_csv, .id = "source") -> all_flights
+
+all_flights %>% 
+  dplyr::distinct(source)
+```
+
+
 # Defines functions
 
 ```{r}
@@ -79,6 +91,7 @@ all_flights %>%
   tidyr::nest() %>% 
   dplyr::mutate(distance = purrr::map_dbl(data, ~ calc_flight_dist(.x)),
                 straight_distance = purrr::map_dbl(data, ~ calc_straight_dist(.x)),
+                sinuosity = distance / straight_distance,
                 plot_3d = purrr::map(data, ~ plots_flight_path(.x)),
                 butterfly = stringr::str_extract(source, pattern = "b\\d{3}"),
                 take = stringr::str_extract(source, pattern = "t\\d{1}")) 
@@ -125,7 +138,7 @@ The above might not work because of gaps in the tracking, the method below might
 Gotta take the difference between the min and max values so we know the full extent of the flight even though some points might be missing.
 
 ```{r}
-read_csv(here("subset-unpaired-points", "b211-t2-unpaired-points-xyz.csv")) %>% 
+read_csv(here::here("subset-unpaired-points", "b211-t2-unpaired-points-xyz.csv")) %>% 
   tibble::rowid_to_column(var = "row_number") %>% 
   tidyr::drop_na() %>%
   select(row_number) %>% 
