@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Loads and installs packages used if needed
 
-```{r}
+```{r warning=FALSE}
 list_of_packages <- c("tidyverse", "here", "fs", "plotly")
 new_packages <- list_of_packages[!(list_of_packages %in% installed.packages()[,"Package"])]
 if(length(new_packages)) install.packages(new_packages)
@@ -26,7 +26,7 @@ library(plotly)
 The following chunk loads all .csv files in the "subset-unpaired-points" folder
 and puts
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 files <- fs::dir_ls(here::here("subset-unpaired-points"))
 
 files %>% 

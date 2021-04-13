@@ -170,7 +170,13 @@ pre code {
 </div>
 
 
-<pre class="r"><code>library(tidyverse)</code></pre>
+<div id="loads-and-installs-packages-used-if-needed" class="section level1">
+<h1>Loads and installs packages used if needed</h1>
+<pre class="r"><code>list_of_packages &lt;- c(&quot;tidyverse&quot;, &quot;here&quot;, &quot;fs&quot;, &quot;plotly&quot;)
+new_packages &lt;- list_of_packages[!(list_of_packages %in% installed.packages()[,&quot;Package&quot;])]
+if(length(new_packages)) install.packages(new_packages)
+
+library(tidyverse)</code></pre>
 <pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
 <pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
 ## ✓ tibble  3.1.0     ✓ dplyr   1.0.5
@@ -194,9 +200,17 @@ library(plotly)</code></pre>
 <pre><code>## The following object is masked from &#39;package:graphics&#39;:
 ## 
 ##     layout</code></pre>
+</div>
+<div id="loads-files" class="section level1">
+<h1>Loads files</h1>
+<p>The following chunk loads all .csv files in the “subset-unpaired-points” folder and puts</p>
 <pre class="r"><code>files &lt;- fs::dir_ls(here::here(&quot;subset-unpaired-points&quot;))
 
 files %&gt;% 
+  purrr::map_dfr(readr::read_csv, .id = &quot;source&quot;) -&gt; all_flights</code></pre>
+<div id="trying-to-auto-load-all-files" class="section level2">
+<h2>trying to auto load all files</h2>
+<pre class="r"><code>fs::dir_ls(here::here(&#39;wand&#39;), recurse = T, regexp = &quot;unpaired-points-xyz.csv$&quot;) %&gt;% 
   purrr::map_dfr(readr::read_csv, .id = &quot;source&quot;) -&gt; all_flights</code></pre>
 <pre><code>## 
 ## ── Column specification ────────────────────────────────────────────────────────
@@ -212,7 +226,291 @@ files %&gt;%
 ##   x_1 = col_double(),
 ##   y_1 = col_double(),
 ##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
+## )
+## 
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   x_1 = col_double(),
+##   y_1 = col_double(),
+##   z_1 = col_double()
 ## )</code></pre>
+<pre class="r"><code>all_flights %&gt;% 
+  dplyr::distinct(source)</code></pre>
+<pre><code>## # A tibble: 35 x 1
+##    source                                                                       
+##    &lt;chr&gt;                                                                        
+##  1 /home/francisko/coding/r/flight-path-experiment/wand/b195-t1/b195-t1-unpaire…
+##  2 /home/francisko/coding/r/flight-path-experiment/wand/b195-t2/b195-t2-unpaire…
+##  3 /home/francisko/coding/r/flight-path-experiment/wand/b195-t3/b195-t3-unpaire…
+##  4 /home/francisko/coding/r/flight-path-experiment/wand/b195-t4/b195-t4-unpaire…
+##  5 /home/francisko/coding/r/flight-path-experiment/wand/b195-t5/b195-t5-unpaire…
+##  6 /home/francisko/coding/r/flight-path-experiment/wand/b206-t1/b206-t1-unpaire…
+##  7 /home/francisko/coding/r/flight-path-experiment/wand/b206-t2/b206-t2-unpaire…
+##  8 /home/francisko/coding/r/flight-path-experiment/wand/b206-t3/b206-t3-unpaire…
+##  9 /home/francisko/coding/r/flight-path-experiment/wand/b206-t4/b206-t4-unpaire…
+## 10 /home/francisko/coding/r/flight-path-experiment/wand/b211-t1/b211-t1-unpaire…
+## # … with 25 more rows</code></pre>
+</div>
+</div>
+<div id="defines-functions" class="section level1">
+<h1>Defines functions</h1>
 <pre class="r"><code>calc_flight_dist &lt;- function(dat) {
   dat_dist &lt;-  {{dat}} %&gt;% 
   dplyr::filter(!is.na(x_1)) %&gt;%  # removes NA
@@ -246,15 +544,25 @@ return(dist_dat[1, nrow(dist_dat)])
   tidyr::nest() %&gt;% 
   dplyr::mutate(distance = purrr::map_dbl(data, ~ calc_flight_dist(.x)),
                 straight_distance = purrr::map_dbl(data, ~ calc_straight_dist(.x)),
+                sinuosity = distance / straight_distance,
                 plot_3d = purrr::map(data, ~ plots_flight_path(.x)),
                 butterfly = stringr::str_extract(source, pattern = &quot;b\\d{3}&quot;),
                 take = stringr::str_extract(source, pattern = &quot;t\\d{1}&quot;)) </code></pre>
-<pre><code>## # A tibble: 2 x 7
-## # Groups:   source [2]
-##   source              data     distance straight_distan… plot_3d butterfly take 
-##   &lt;chr&gt;               &lt;list&gt;      &lt;dbl&gt;            &lt;dbl&gt; &lt;list&gt;  &lt;chr&gt;     &lt;chr&gt;
-## 1 /home/francisko/co… &lt;tibble…     4.83             2.12 &lt;plotl… b195      t1   
-## 2 /home/francisko/co… &lt;tibble…     3.04             2.36 &lt;plotl… b211      t2</code></pre>
+<pre><code>## # A tibble: 35 x 8
+## # Groups:   source [35]
+##    source     data   distance straight_distan… sinuosity plot_3d butterfly take 
+##    &lt;chr&gt;      &lt;list&gt;    &lt;dbl&gt;            &lt;dbl&gt;     &lt;dbl&gt; &lt;list&gt;  &lt;chr&gt;     &lt;chr&gt;
+##  1 /home/fra… &lt;tibb…     4.83             2.12      2.27 &lt;plotl… b195      t1   
+##  2 /home/fra… &lt;tibb…     3.25             1.93      1.68 &lt;plotl… b195      t2   
+##  3 /home/fra… &lt;tibb…     3.36             1.84      1.83 &lt;plotl… b195      t3   
+##  4 /home/fra… &lt;tibb…     3.45             2.56      1.34 &lt;plotl… b195      t4   
+##  5 /home/fra… &lt;tibb…     4.26             2.44      1.75 &lt;plotl… b195      t5   
+##  6 /home/fra… &lt;tibb…     4.13             3.04      1.36 &lt;plotl… b206      t1   
+##  7 /home/fra… &lt;tibb…     4.48             3.38      1.32 &lt;plotl… b206      t2   
+##  8 /home/fra… &lt;tibb…     3.75             3.03      1.24 &lt;plotl… b206      t3   
+##  9 /home/fra… &lt;tibb…     3.92             3.40      1.15 &lt;plotl… b206      t4   
+## 10 /home/fra… &lt;tibb…     2.22             1.90      1.17 &lt;plotl… b211      t1   
+## # … with 25 more rows</code></pre>
 <pre class="r"><code># -&gt; processed</code></pre>
 <pre class="r"><code>string &lt;-  &quot;/home/francisko/coding/r/flight-path-experiment/subset-unpaired-points/b195-t1-unpaired-points-xyz.csv&quot;
 
@@ -307,7 +615,7 @@ str_extract(string, pattern = &quot;b\\d{3}&quot;)</code></pre>
 <pre><code>## [1] 88</code></pre>
 <p>The above might not work because of gaps in the tracking, the method below might be better</p>
 <p>Gotta take the difference between the min and max values so we know the full extent of the flight even though some points might be missing.</p>
-<pre class="r"><code>read_csv(here(&quot;subset-unpaired-points&quot;, &quot;b211-t2-unpaired-points-xyz.csv&quot;)) %&gt;% 
+<pre class="r"><code>read_csv(here::here(&quot;subset-unpaired-points&quot;, &quot;b211-t2-unpaired-points-xyz.csv&quot;)) %&gt;% 
   tibble::rowid_to_column(var = &quot;row_number&quot;) %&gt;% 
   tidyr::drop_na() %&gt;%
   select(row_number) %&gt;% 
@@ -320,6 +628,7 @@ str_extract(string, pattern = &quot;b\\d{3}&quot;)</code></pre>
 ##   z_1 = col_double()
 ## )</code></pre>
 <pre><code>## [1]  1 97</code></pre>
+</div>
 
 
 

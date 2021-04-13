@@ -28,8 +28,8 @@ you want after all `r emo::ji("smile")`
 
 ## Loads and installs packages used if needed
 
-```{r}
-list_of_packages <- c("tidyverse", "here", "fs", "plotly")
+```{r warning=FALSE, message=FALSE}
+list_of_packages <- c("tidyverse", "here", "fs", "plotly", "DT")
 new_packages <- list_of_packages[!(list_of_packages %in% installed.packages()[,"Package"])]
 if(length(new_packages)) install.packages(new_packages)
 
@@ -37,16 +37,14 @@ library(tidyverse)
 library(here)
 library(fs)
 library(plotly)
+library(DT)
 ```
 
 ## Loading files
 
-```{r}
+```{r message=FALSE}
 fs::dir_ls(here::here('wand'), recurse = T, regexp = "unpaired-points-xyz.csv$") %>% 
   purrr::map_dfr(readr::read_csv, .id = "source") -> all_flights
-
-all_flights %>% 
-  dplyr::distinct(source)
 ```
 
 
