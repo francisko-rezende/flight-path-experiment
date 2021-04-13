@@ -5,6 +5,8 @@ date: "4/13/2021"
 output:
   html_document:
     toc: true
+    toc_float:
+      collapsed: false
 ---
 
 ```{r setup, include=FALSE}
@@ -30,8 +32,10 @@ you want after all `r emo::ji("smile")`
 
 ```{r warning=FALSE, message=FALSE}
 list_of_packages <- c("tidyverse", "here", "fs", "plotly", "DT")
-new_packages <- list_of_packages[!(list_of_packages %in% installed.packages()[,"Package"])]
-if(length(new_packages)) install.packages(new_packages)
+new_packages <-
+  list_of_packages[!(list_of_packages %in% installed.packages()[, "Package"])]
+if (length(new_packages))
+  install.packages(new_packages)
 
 library(tidyverse)
 library(here)
@@ -43,7 +47,7 @@ library(DT)
 ## Loading files
 
 ```{r message=FALSE}
-fs::dir_ls(here::here('wand'), recurse = T, regexp = "unpaired-points-xyz.csv$") %>% 
+fs::dir_ls(here::here('wand'), recurse = T, regexp = "unpaired-points-xyz.csv$") %>%
   purrr::map_dfr(readr::read_csv, .id = "source") -> all_flights
 ```
 
