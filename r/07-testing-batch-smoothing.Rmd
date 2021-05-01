@@ -152,5 +152,3 @@ flights_smoothed_grouping %>%
 ```{r}
 all(f2_many_grouped == f2_single)
 ```
-
-Grouping seems to work! `r emo::ji("smile)`
