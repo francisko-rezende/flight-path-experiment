@@ -26,6 +26,8 @@ shorter.
 I suppose that's enough rambling from me, let's give you the tables, that's what
 you want after all `r emo::ji("smile")`
 
+The code for generating this document lives in this [repo](https://github.com/francisko-rezende/flight-path-experiment), in the file `06-updated-flight.Rmd`.
+
 # Data processing
 
 ## Loads and installs packages used if needed
@@ -157,28 +159,18 @@ processed %>%
 ```
 
 
-# New stuff
+<!-- # New stuff -->
 
-## Measuring flight lenght in frames
+<!-- ## Measuring flight lenght in frames -->
 
-```{r}
-# all_flights 
-fs::dir_ls(here::here('wand'), recurse = T, regexp = "unpaired-points-xyz.csv$") %>%
-  purrr::map_dfr(readr::read_csv, .id = "source") %>%
-  dplyr::group_by(source) %>% 
-  dplyr::mutate(row_n = row_number()) %>% 
-  dplyr::ungroup() %>%
-  tidyr::drop_na() %>% 
-  dplyr::group_by(source) %>% 
-  dplyr::summarise(flight_duration_frames = max(row_n) - min(row_n))
-```
-
-## Defining the filter
-
-```{r}
-butterworth_filter <-
-  signal::butter(n = 4,  # order
-                 W = 0.5,  # critical frequency
-                 type = "low")
-```
-
+<!-- ```{r} -->
+<!-- # all_flights  -->
+<!-- fs::dir_ls(here::here('wand'), recurse = T, regexp = "unpaired-points-xyz.csv$") %>% -->
+<!--   purrr::map_dfr(readr::read_csv, .id = "source") %>% -->
+<!--   dplyr::group_by(source) %>%  -->
+<!--   dplyr::mutate(row_n = row_number()) %>%  -->
+<!--   dplyr::ungroup() %>% -->
+<!--   tidyr::drop_na() %>%  -->
+<!--   dplyr::group_by(source) %>%  -->
+<!--   dplyr::summarise(flight_duration_frames = max(row_n) - min(row_n)) -->
+<!-- ``` -->

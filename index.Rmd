@@ -12,6 +12,16 @@ output:
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 ```
 
+
+# HEADS UP!
+
+I've found issues with the data produced by code in this file, DO NOT USE IT!
+
+You can find an updated version of the processed data (and the code to produce it)
+[here](https://francisko-rezende.github.io/flight-path-experiment/r/06-updated-flight.html)
+
+## The old document starts here
+
 The code for generating this document lives [here](https://github.com/francisko-rezende/flight-path-experiment), in the file `index.Rmd`.
 
 ## Setup
