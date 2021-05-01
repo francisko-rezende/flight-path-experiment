@@ -1,0 +1,156 @@
+---
+title: "Untitled"
+author: "Francisko de Moraes Rezende"
+date: "4/14/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+list_of_packages <- c("tidyverse", "plotly", "here", "signal", "DT", "fs")
+new_packages <- list_of_packages[!(list_of_packages %in% installed.packages()[,"Package"])]
+if(length(new_packages)) install.packages(new_packages)
+
+library(tidyverse)
+library(plotly)
+library(here)
+library(signal)
+library(DT)
+library(fs)
+```
+
+```{r}
+butterworth_filter <-
+  signal::butter(n = 4,  # order
+                 W = 0.5,  # critical frequency
+                 type = "low")
+```
+
+```{r message=FALSE}
+fs::dir_ls(
+  path = here::here("subset-unpaired-points"),
+  recurse = TRUE,
+  regexp = "*unpaired-points-xyz.csv"
+) %>%
+  purrr::map_dfr(readr::read_csv, .id = "source") %>%
+  tidyr::drop_na() -> flights
+```
+
+# Smoothing and nesting
+
+```{r}
+flights %>%
+  dplyr::mutate(
+    x_butterworth = signal::filter(butterworth_filter, x_1),
+    y_butterworth = signal::filter(butterworth_filter, y_1),
+    z_butterworth = signal::filter(butterworth_filter, z_1)
+  ) %>% 
+  dplyr::group_by(source) %>% 
+  tidyr::nest(raw_data = ends_with("_1"),
+              smoothed_data = ends_with("_butterworth")) %>% 
+  tidyr::unnest()
+```
+
+# Testing if applying filter to multiple flights affects the results
+
+```{r}
+flights %>%
+  dplyr::mutate(
+    x_butterworth = signal::filter(butterworth_filter, x_1),
+    y_butterworth = signal::filter(butterworth_filter, y_1),
+    z_butterworth = signal::filter(butterworth_filter, z_1)
+  ) -> flights_smoothed
+```
+
+
+```{r}
+to_filter <-
+  flights %>% 
+  dplyr::distinct(source) %>% 
+  pull()
+```
+
+## first flight
+
+```{r}
+flights %>% 
+  dplyr::filter(source == to_filter[1]) %>% 
+   dplyr::mutate(
+    x_butterworth = signal::filter(butterworth_filter, x_1),
+    y_butterworth = signal::filter(butterworth_filter, y_1),
+    z_butterworth = signal::filter(butterworth_filter, z_1)
+  ) -> f1_single
+```
+
+
+```{r}
+flights_smoothed %>% 
+  dplyr::filter(source == to_filter[1]) -> f1_many
+```
+
+```{r}
+all(f1_many == f1_single)
+```
+
+## second flight
+
+
+```{r}
+flights %>% 
+  dplyr::filter(source == to_filter[2]) %>% 
+   dplyr::mutate(
+    x_butterworth = signal::filter(butterworth_filter, x_1),
+    y_butterworth = signal::filter(butterworth_filter, y_1),
+    z_butterworth = signal::filter(butterworth_filter, z_1)
+  ) -> f2_single
+```
+
+
+```{r}
+flights_smoothed %>% 
+  dplyr::filter(source == to_filter[2]) -> f2_many
+```
+
+```{r}
+all(f2_many == f2_single)
+```
+```{r}
+setdiff(f2_many, f2_single)
+```
+
+Seems like only the first flight to which the filter was applied is the same between
+batch and individual ways to apply the filter
+
+## Trying to apply filter after gouping
+
+```{r}
+flights %>%
+  dplyr::group_by(source) %>% 
+  dplyr::mutate(
+    x_butterworth = signal::filter(butterworth_filter, x_1),
+    y_butterworth = signal::filter(butterworth_filter, y_1),
+    z_butterworth = signal::filter(butterworth_filter, z_1)
+  ) %>% 
+  ungroup() -> flights_smoothed_grouping
+```
+
+```{r}
+all(flights_smoothed == flights_smoothed_grouping)
+```
+```{r}
+setdiff(flights_smoothed, flights_smoothed_grouping)
+```
+
+```{r}
+flights_smoothed_grouping %>% 
+  dplyr::filter(source == to_filter[2]) -> f2_many_grouped
+```
+
+```{r}
+all(f2_many_grouped == f2_single)
+```
+
+Grouping seems to work! `r emo::ji("smile)`

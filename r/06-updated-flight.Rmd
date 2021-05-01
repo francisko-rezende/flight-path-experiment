@@ -31,7 +31,7 @@ you want after all `r emo::ji("smile")`
 ## Loads and installs packages used if needed
 
 ```{r warning=FALSE, message=FALSE}
-list_of_packages <- c("tidyverse", "here", "fs", "plotly", "DT")
+list_of_packages <- c("tidyverse", "here", "fs", "plotly", "DT", "signal")
 new_packages <-
   list_of_packages[!(list_of_packages %in% installed.packages()[, "Package"])]
 if (length(new_packages))
@@ -42,6 +42,7 @@ library(here)
 library(fs)
 library(plotly)
 library(DT)
+library(signal)
 ```
 
 ## Loading files
@@ -51,13 +52,19 @@ fs::dir_ls(here::here('wand'), recurse = T, regexp = "unpaired-points-xyz.csv$")
   purrr::map_dfr(readr::read_csv, .id = "source") -> all_flights
 ```
 
+## Removing NaNs
+
+```{r}
+all_flights %>% 
+  tidyr::drop_na() -> all_flights
+```
+
 
 ## Defining functions
 
 ```{r}
 calc_flight_dist <- function(dat) {
   dat_dist <-  {{dat}} %>% 
-  dplyr::filter(!is.na(x_1)) %>%  # removes NA
   dist() %>%  # calculates distance
   as.matrix()  # converts it to a matrix
 
@@ -83,7 +90,6 @@ calc_straight_dist <- function(dat) {
   
 dist_dat <- 
   dat %>% 
-  dplyr::filter(!is.na(x_1)) %>%
   dist() %>% 
   as.matrix()
 
@@ -96,25 +102,53 @@ return(dist_dat[1, nrow(dist_dat)])
 ```{r}
 all_flights %>%
   dplyr::group_by(source) %>%
-  tidyr::nest() %>% 
-  dplyr::mutate(distance = purrr::map_dbl(data, ~ calc_flight_dist(.x)),
-                straight_distance = purrr::map_dbl(data, ~ calc_straight_dist(.x)),
-                sinuosity = distance / straight_distance,
-                plot_3d = purrr::map(data, ~ plots_flight_path(.x)),
-                butterfly = stringr::str_extract(source, pattern = "b\\d{3}"),
-                take = stringr::str_extract(source, pattern = "t\\d{1}")) -> processed
+  tidyr::nest() %>%
+  dplyr::mutate(
+    distance = purrr::map_dbl(data, ~ calc_flight_dist(.x)),
+    straight_distance = purrr::map_dbl(data, ~ calc_straight_dist(.x)),
+    sinuosity = distance / straight_distance,
+    plot_3d = purrr::map(data, ~ plots_flight_path(.x)),
+    butterfly = stringr::str_extract(source, pattern = "b\\d{3}"),
+    take = stringr::str_extract(source, pattern = "t\\d{1}")
+  ) %>%
+  dplyr::ungroup() -> processed
 ```
 
 ## Here's the table
 
 ```{r}
-processed %>% 
-  dplyr::ungroup() %>% 
+processed %>%  
   dplyr::select(butterfly, take, everything(), -source, -data, -plot_3d) %>% 
   DT::datatable(extensions = 'Buttons',
                 options = list(dom = 'Blfrtip',
                                buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
                                lengthMenu = list(c(10,25,50,-1),
                                                  c(10,25,50,"All"))))
+```
+
+
+# New stuff
+
+## Measuring flight lenght in frames
+
+```{r}
+# all_flights 
+fs::dir_ls(here::here('wand'), recurse = T, regexp = "unpaired-points-xyz.csv$") %>%
+  purrr::map_dfr(readr::read_csv, .id = "source") %>%
+  dplyr::group_by(source) %>% 
+  dplyr::mutate(row_n = row_number()) %>% 
+  dplyr::ungroup() %>%
+  tidyr::drop_na() %>% 
+  dplyr::group_by(source) %>% 
+  dplyr::summarise(flight_duration_frames = max(row_n) - min(row_n))
+```
+
+## Defining the filter
+
+```{r}
+butterworth_filter <-
+  signal::butter(n = 4,  # order
+                 W = 0.5,  # critical frequency
+                 type = "low")
 ```
 
